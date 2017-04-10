@@ -1,0 +1,31 @@
+{
+  "name": "lumi-aqara",
+  "description": "Control your Xiaomi Smart Home devices with this Lumi Aqara library",
+  "version": "1.0.0",
+  "author": [
+    {
+      "name": "Marvin ROGER",
+      "email": "bonjourmarvin@marvinroger.fr",
+      "web": "https://www.marvinroger.fr"
+    }
+  ],
+  "bugs": {
+    "web": "https://github.com/marvinroger/node-lumi-aqara/issues"
+  },
+  "homepage": "https://github.com/marvinroger/node-lumi-aqara",
+  "keywords": [
+    "aqara",
+    "gateway",
+    "home",
+    "iot",
+    "lumi",
+    "smart",
+    "xiaomi"
+  ],
+  "license": "GPL-3.0",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marvinroger/node-lumi-aqara.git"
+  }
+}
