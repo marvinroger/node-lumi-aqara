@@ -5,7 +5,7 @@ const events = require('events')
 const {MULTICAST_ADDRESS, DISCOVERY_PORT, SERVER_PORT} = require('./constants')
 const Gateway = require('./lib/gateway')
 
-class LumiDiscoverer extends events.EventEmitter {
+class Aqara extends events.EventEmitter {
   constructor () {
     super()
 
@@ -74,4 +74,4 @@ class LumiDiscoverer extends events.EventEmitter {
   }
 }
 
-module.exports = LumiDiscoverer
+module.exports = Aqara

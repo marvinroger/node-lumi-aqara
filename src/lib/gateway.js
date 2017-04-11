@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const events = require('events')
 
-const {LUMI_IV, GATEWAY_HEARTBEAT_INTERVAL_MS, GATEWAY_HEARTBEAT_OFFLINE_RATIO} = require('../constants')
+const {AQARA_IV, GATEWAY_HEARTBEAT_INTERVAL_MS, GATEWAY_HEARTBEAT_OFFLINE_RATIO} = require('../constants')
 const Magnet = require('./magnet')
 const Switch = require('./switch')
 
@@ -108,7 +108,7 @@ class Gateway extends events.EventEmitter {
     if (token) this._token = token
     if (!this._password || !this._token) return
 
-    const cipher = crypto.createCipheriv('aes-128-cbc', this._password, LUMI_IV)
+    const cipher = crypto.createCipheriv('aes-128-cbc', this._password, AQARA_IV)
     this._key = cipher.update(this._token, 'ascii', 'hex')
     cipher.final('hex') // useless
   }

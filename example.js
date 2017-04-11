@@ -1,7 +1,7 @@
-const LumiDiscoverer = require('./src')
+const Aqara = require('./src')
 
-const lumi = new LumiDiscoverer()
-lumi.on('gateway', (gateway) => {
+const aqara = new Aqara()
+aqara.on('gateway', (gateway) => {
   console.log('Gateway discovered')
   gateway.on('ready', () => {
     console.log('Gateway is ready')
