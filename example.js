@@ -11,6 +11,7 @@ aqara.on('gateway', (gateway) => {
   })
 
   gateway.on('offline', () => {
+    gateway = null
     console.log('Gateway is offline')
   })
 
