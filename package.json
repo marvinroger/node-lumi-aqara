@@ -2,13 +2,11 @@
   "name": "lumi-aqara",
   "description": "Control your Xiaomi Smart Home devices with this Lumi Aqara library",
   "version": "1.0.0",
-  "author": [
-    {
-      "name": "Marvin ROGER",
-      "email": "bonjourmarvin@marvinroger.fr",
-      "web": "https://www.marvinroger.fr"
-    }
-  ],
+  "author": {
+    "name": "Marvin ROGER",
+    "email": "bonjourmarvin@marvinroger.fr",
+    "web": "https://www.marvinroger.fr"
+  },
   "bugs": {
     "web": "https://github.com/marvinroger/node-lumi-aqara/issues"
   },
