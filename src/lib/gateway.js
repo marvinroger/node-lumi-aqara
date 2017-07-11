@@ -87,11 +87,11 @@ class Gateway extends events.EventEmitter {
         state = JSON.parse(msg.data)
         if (msg.sid === this._sid) this._handleState(state) // self
         else {
-          console.log('will handle state for subdevice : ' + msg.sid)
+          // console.log('will handle state for subdevice : ' + msg.sid)
           if (this._subdevices.get(msg.sid)) {
             this._subdevices.get(msg.sid)._handleState(state)
           } else {
-            console.log('did not manage to find device, or device not yet supported')
+            // console.log('did not manage to find device, or device not yet supported')
           }
         }
         break
