@@ -4,6 +4,8 @@ const events = require('events')
 const {AQARA_IV, GATEWAY_HEARTBEAT_INTERVAL_MS, GATEWAY_HEARTBEAT_OFFLINE_RATIO} = require('../constants')
 const Magnet = require('./magnet')
 const Switch = require('./switch')
+const Motion = require('./motion')
+const Sensor = require('./sensor')
 
 class Gateway extends events.EventEmitter {
   constructor (opts) {
@@ -65,6 +67,12 @@ class Gateway extends events.EventEmitter {
               break
             case 'switch':
               subdevice = new Switch({ sid })
+              break
+            case 'motion':
+              subdevice = new Motion({ sid })
+              break
+            case 'sensor_ht':
+              subdevice = new Sensor({ sid })
               break
             default:
               return false
