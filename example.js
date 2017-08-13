@@ -45,6 +45,21 @@ aqara.on('gateway', (gateway) => {
           console.log(`${device.getSid()} is long released`)
         })
         break
+      case 'motion':
+        console.log(`  Motion (${device.hasMotion() ? 'motion' : 'no motion'})`)
+        device.on('motion', () => {
+          console.log(`${device.getSid()} has motion`)
+        })
+        device.on('noMotion', () => {
+          console.log(`${device.getSid()} has no motion (${device.getSecondsSinceMotion()})`)
+        })
+        break
+      case 'sensor':
+        console.log(`  Sensor (temperature:${device.getTemperature()}C rh:${device.getHumidity()}%)`)
+        device.on('update', () => {
+          console.log(`${device.getSid()} temperature: ${device.getTemperature()}C rh:${device.getHumidity()}%`)
+        })
+        break
     }
   })
 
