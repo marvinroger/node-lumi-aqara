@@ -3,6 +3,9 @@ const Subdevice = require('./subdevice')
 class Motion extends Subdevice {
   constructor (opts) {
     super({ sid: opts.sid, type: 'motion' })
+
+    this._motion = null
+    this._seconds = null
   }
 
   _handleState (state) {

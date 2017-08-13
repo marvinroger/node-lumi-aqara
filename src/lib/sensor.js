@@ -3,6 +3,9 @@ const Subdevice = require('./subdevice')
 class Sensor extends Subdevice {
   constructor (opts) {
     super({ sid: opts.sid, type: 'sensor' })
+
+    this._temperature = null
+    this._humidity = null
   }
 
   _handleState (state) {
