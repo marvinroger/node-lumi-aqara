@@ -6,6 +6,7 @@ class Sensor extends Subdevice {
 
     this._temperature = null
     this._humidity = null
+    this._pressure = null
   }
 
   _handleState (state) {
@@ -17,6 +18,9 @@ class Sensor extends Subdevice {
     }
     if (state.humidity) {
       this._humidity = state.humidity / 100
+    }
+    if (state.pressure) {
+      this._pressure = state.pressure / 1000
     }
 
     if (this._timeout) {
@@ -35,6 +39,9 @@ class Sensor extends Subdevice {
   }
   getHumidity () {
     return this._humidity
+  }
+  getPressure () {
+    return this._pressure
   }
 }
 

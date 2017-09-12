@@ -6,6 +6,7 @@ const Magnet = require('./magnet')
 const Switch = require('./switch')
 const Motion = require('./motion')
 const Sensor = require('./sensor')
+const Leak = require('./leak')
 
 class Gateway extends events.EventEmitter {
   constructor (opts) {
@@ -72,7 +73,11 @@ class Gateway extends events.EventEmitter {
               subdevice = new Motion({ sid })
               break
             case 'sensor_ht':
+            case 'weather.v1':
               subdevice = new Sensor({ sid })
+              break
+            case 'sensor_wleak.aq1':
+              subdevice = new Leak({ sid })
               break
             default:
               return false
