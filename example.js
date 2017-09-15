@@ -62,11 +62,8 @@ aqara.on('gateway', (gateway) => {
         break
       case 'leak':
         console.log(`  Leak sensor`)
-        device.on('leak', () => {
-          console.log(`${device.getSid()} leak detected`)
-        })
-        device.on('noLeak', () => {
-          console.log(`${device.getSid()} leak not detected any more`)
+        device.on('update', () => {
+          console.log(`${device.getSid()}${device.isLeaking() ? '' : ' not'} leaking`)
         })
         break
     }
