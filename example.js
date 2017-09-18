@@ -55,9 +55,15 @@ aqara.on('gateway', (gateway) => {
         })
         break
       case 'sensor':
-        console.log(`  Sensor (temperature:${device.getTemperature()}C rh:${device.getHumidity()}%)`)
+        console.log(`  Sensor (temperature:${device.getTemperature()}C rh:${device.getHumidity()}%${device.getPressure() != null ? ' pressure:' + device.getPressure() + 'kPa': ''})`)
         device.on('update', () => {
-          console.log(`${device.getSid()} temperature: ${device.getTemperature()}C rh:${device.getHumidity()}%`)
+          console.log(`${device.getSid()} temperature: ${device.getTemperature()}C rh:${device.getHumidity()}%${device.getPressure() != null ? ' pressure:' + device.getPressure() + 'kPa' : ''}`)
+        })
+        break
+      case 'leak':
+        console.log(`  Leak sensor`)
+        device.on('update', () => {
+          console.log(`${device.getSid()}${device.isLeaking() ? '' : ' not'} leaking`)
         })
         break
     }
