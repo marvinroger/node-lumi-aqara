@@ -48,10 +48,10 @@ aqara.on('gateway', (gateway) => {
       case 'motion':
         console.log(`  Motion (${device.hasMotion() ? 'motion' : 'no motion'})`)
         device.on('motion', () => {
-          console.log(`${device.getSid()} has motion`)
+          console.log(`${device.getSid()} has motion${device.getLux() !== null ? ' (lux:' + device.getLux() + ')' : ''}`)
         })
         device.on('noMotion', () => {
-          console.log(`${device.getSid()} has no motion (${device.getSecondsSinceMotion()})`)
+          console.log(`${device.getSid()} has no motion (inactive:${device.getSecondsSinceMotion()}${device.getLux() !== null ? ' lux:' + device.getLux() : ''})`)
         })
         break
       case 'sensor':
@@ -64,6 +64,12 @@ aqara.on('gateway', (gateway) => {
         console.log(`  Leak sensor`)
         device.on('update', () => {
           console.log(`${device.getSid()}${device.isLeaking() ? '' : ' not'} leaking`)
+        })
+        break
+      case 'cube':
+        console.log(`  Cube`)
+        device.on('update', () => {
+          console.log(`${device.getSid()} ${device.getStatus()}${device.getRotateDegrees() !== null ? ' ' + device.getRotateDegrees() : ''}`)
         })
         break
     }
