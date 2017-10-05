@@ -66,6 +66,12 @@ aqara.on('gateway', (gateway) => {
           console.log(`${device.getSid()}${device.isLeaking() ? '' : ' not'} leaking`)
         })
         break
+      case 'cube':
+        console.log(`  Cube`)
+        device.on('update', () => {
+          console.log(`${device.getSid()} ${device.getStatus()}${device.getRotateDegrees() !== null ? ' ' + device.getRotateDegrees() : ''}`)
+        })
+        break
     }
   })
 
