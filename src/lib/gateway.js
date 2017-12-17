@@ -69,7 +69,8 @@ class Gateway extends events.EventEmitter {
               subdevice = new Magnet({ sid })
               break
             case 'switch':
-              subdevice = new Switch({ sid })
+            case 'sensor_switch.aq2':
+            subdevice = new Switch({ sid })
               break
             case 'motion':
             case 'sensor_motion.aq2':
