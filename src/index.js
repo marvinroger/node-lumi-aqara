@@ -44,7 +44,7 @@ class Aqara extends events.EventEmitter {
 
     switch (parsed.cmd) {
       case 'heartbeat':
-        if (!this._gateways.has(parsed.sid)) {
+        if (parsed.model === 'gateway' && !this._gateways.has(parsed.sid)) {
           handled = true
           this._triggerWhois()
         }

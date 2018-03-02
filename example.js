@@ -72,6 +72,21 @@ aqara.on('gateway', (gateway) => {
           console.log(`${device.getSid()} ${device.getStatus()}${device.getRotateDegrees() !== null ? ' ' + device.getRotateDegrees() : ''}`)
         })
         break
+      case 'plug':
+        console.log(`  Plug`)
+        device.on('on', () => {
+          console.log(`${device.getSid()} is now on`)
+        })
+        device.on('off', () => {
+          console.log(`${device.getSid()} is now off`)
+        })
+        device.on('update', () => {
+          console.log(`${device.getSid()} on: ${device.isOn()} load power: ${device.getLoadPower()}W, power consumed: ${device.getPowerConsumed()}Wh`)
+        })
+
+        gateway.setPlug(device._sid, 'on');
+
+        break
     }
   })
 

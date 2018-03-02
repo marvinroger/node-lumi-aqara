@@ -8,6 +8,7 @@ const Motion = require('./motion')
 const Sensor = require('./sensor')
 const Leak = require('./leak')
 const Cube = require('./cube')
+const Plug = require('./plug')
 
 class Gateway extends events.EventEmitter {
   constructor (opts) {
@@ -86,6 +87,9 @@ class Gateway extends events.EventEmitter {
             case 'cube':
               subdevice = new Cube({ sid })
               break
+            case 'plug':
+              subdevice = new Plug({ sid, short_id: msg.short_id })
+              break
             default:
               return false
           }
@@ -101,6 +105,12 @@ class Gateway extends events.EventEmitter {
         if (msg.sid === this._sid) {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
+        } else {
+          const subdevice = this._subdevices.get(msg.sid)
+          if (subdevice) {
+            state = JSON.parse(msg.data)
+            subdevice._handleState(state)
+          }
         }
         break
       case 'report':
@@ -177,6 +187,17 @@ class Gateway extends events.EventEmitter {
 
     this._intensity = intensity
     this._writeColor()
+  }
+
+  setPlug(sid, status) {
+
+    if((status !== 'on') && (status !== 'off')) return
+
+    const plug = this._subdevices.get(sid)
+    if(!plug) return
+    
+    const payload = `{"cmd": "write", "model": "plug", "sid": "${plug._sid}", "short_id": ${plug._short_id}, "data": "{\\"status\\": \\"${status}\\", \\"key\\": \\"${this._key}\\"}"}`
+    this._sendUnicast(payload)
   }
 }
 
