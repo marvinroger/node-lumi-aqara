@@ -72,6 +72,12 @@ aqara.on('gateway', (gateway) => {
           console.log(`${device.getSid()} ${device.getStatus()}${device.getRotateDegrees() !== null ? ' ' + device.getRotateDegrees() : ''}`)
         })
         break
+      case 'smoke':
+        console.log(`  Smoke`)
+        device.on('update', () => {
+          console.log(`${device.getSid()} (${device.hasAlarm() ? 'SMOKE DETECTED' : 'no smoke detected'} density: ${device.getDensity()})`)
+        })
+        break
     }
   })
 

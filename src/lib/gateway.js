@@ -8,6 +8,7 @@ const Motion = require('./motion')
 const Sensor = require('./sensor')
 const Leak = require('./leak')
 const Cube = require('./cube')
+const Smoke = require('./smoke')
 
 class Gateway extends events.EventEmitter {
   constructor (opts) {
@@ -85,6 +86,9 @@ class Gateway extends events.EventEmitter {
               break
             case 'cube':
               subdevice = new Cube({ sid })
+              break
+            case 'smoke':
+              subdevice = new Smoke({ sid })
               break
             default:
               return false
