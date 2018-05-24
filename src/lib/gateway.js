@@ -23,6 +23,9 @@ class Gateway extends events.EventEmitter {
 
     this._color = { r: 0, g: 0, b: 0 }
 
+    this._sound = 10000
+    this._volume = 0
+
     this._subdevices = new Map()
 
     const payload = '{"cmd": "get_id_list"}'
@@ -157,6 +160,12 @@ class Gateway extends events.EventEmitter {
     this._sendUnicast(payload)
   }
 
+  _writeSound () {
+
+    const payload = `{"cmd": "write", "model": "gateway", "sid": "${this._sid}", "short_id": 0, "data": "{\\"mid\\":${this._sound}, \\"vol\\":${this._volume}, \\"key\\": \\"${this._key}\\"}"}`
+    this._sendUnicast(payload)
+  }
+
   get ip () { return this._ip }
   get sid () { return this._sid }
   get ready () { return this._ready }
@@ -173,6 +182,16 @@ class Gateway extends events.EventEmitter {
 
     this._color = color
     this._writeColor()
+  }
+
+  get sound () { return this._sound }
+  get volume () { return this._volume }
+  setSound (sound, volume) {
+    if (!this._ready) return
+
+    this._sound = sound
+    this._volume = volume
+    this._writeSound()
   }
 
   get intensity () { return this._intensity }
