@@ -8,6 +8,7 @@ aqara.on('gateway', (gateway) => {
     gateway.setPassword('sotxcen2i4otuj7z')
     gateway.setColor({ r: 255, g: 0, b: 0 })
     gateway.setIntensity(100)
+    gateway.setSound(11,50) // 11 : Knock at the door | 50 : volume (0-100)
   })
 
   gateway.on('offline', () => {
