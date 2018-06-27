@@ -8,6 +8,7 @@ aqara.on('gateway', (gateway) => {
     gateway.setPassword('sotxcen2i4otuj7z')
     gateway.setColor({ r: 255, g: 0, b: 0 })
     gateway.setIntensity(100)
+    gateway.setSound(11,50) // 11 : Knock at the door | 50 : volume (0-100)
   })
 
   gateway.on('offline', () => {
@@ -83,9 +84,13 @@ aqara.on('gateway', (gateway) => {
         device.on('update', () => {
           console.log(`${device.getSid()} on: ${device.isOn()} load power: ${device.getLoadPower()}W, power consumed: ${device.getPowerConsumed()}Wh`)
         })
+        break
 
-        gateway.setPlug(device._sid, 'on');
-
+      case 'smoke':
+        console.log(`  Smoke`)
+        device.on('update', () => {
+          console.log(`${device.getSid()} (${device.hasAlarm() ? 'SMOKE DETECTED' : 'no smoke detected'} density: ${device.getDensity()})`)
+        })
         break
     }
   })
