@@ -88,6 +88,7 @@ class Gateway extends events.EventEmitter {
               subdevice = new Leak({ sid })
               break
             case 'cube':
+            case 'sensor_cube.aqgl01':
               subdevice = new Cube({ sid })
               break
             case 'smoke':
