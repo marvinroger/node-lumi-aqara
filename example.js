@@ -79,6 +79,21 @@ aqara.on('gateway', (gateway) => {
           console.log(`${device.getSid()} (${device.hasAlarm() ? 'SMOKE DETECTED' : 'no smoke detected'} density: ${device.getDensity()})`)
         })
         break
+      case 'vibration':
+        console.log(`  Vibration`)
+        device.on('update', () => {
+          console.log(`${device.getSid()} (coordination: ${device.getCoordination()} bed_activity: ${device.getBedActivity()})`)
+        })
+        device.on('vibrate', () => {
+          console.log(`${device.getSid()} has vibration`)
+        })
+        device.on('freeFall', () => {
+          console.log(`${device.getSid()} has freeFall`)
+        })
+        device.on('tilt', () => {
+          console.log(`${device.getSid()} (tilt: ${device.getFinalTiltAngel()}°)`)
+        })
+        break;
     }
   })
 
