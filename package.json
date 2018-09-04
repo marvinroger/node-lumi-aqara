@@ -29,10 +29,12 @@
     "url": "https://github.com/marvinroger/node-lumi-aqara.git"
   },
   "scripts": {
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "test": "echo 'No tests'"
+    "semantic-release": "semantic-release",
+    "test": "echo 'No tests'",
+    "travis-deploy-once": "travis-deploy-once"
   },
   "devDependencies": {
-    "semantic-release": "^15.0.0"
+    "semantic-release": "^15.0.0",
+    "travis-deploy-once": "^5.0.7"
   }
 }
