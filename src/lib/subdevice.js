@@ -29,7 +29,10 @@ class Subdevice extends events.EventEmitter {
   }
 
   getBatteryPercentage () {
-    return Math.round(((SUBDEVICE_MAX_VOLT - this._voltage) / (SUBDEVICE_MAX_VOLT - SUBDEVICE_MIN_VOLT)) * 100)
+    let percentage = Math.round(((this._voltage - SUBDEVICE_MIN_VOLT) / (SUBDEVICE_MAX_VOLT - SUBDEVICE_MIN_VOLT)) * 100)
+    if (percentage > 100) percentage = 100
+    if (percentage < 0) percentage = 0
+    return percentage
   }
 }
 
