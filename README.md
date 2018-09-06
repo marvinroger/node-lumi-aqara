@@ -7,3 +7,23 @@
 `npm install --save lumi-aqara`
 
 See [example.js](example.js).
+
+
+#### Further Reading
+
+http://docs.opencloud.aqara.cn/en/development/gateway-LAN-communication/
+
+
+#### Projects using this Library
+
+* [zetta-lumi-aqara-driver](https://github.com/marvinroger/zetta-lumi-aqara-driver)
+* [xiaomi2mqtt](https://github.com/svrooij/node-xiaomi2mqtt)
+* [node-red-contrib-mi-devices](https://github.com/pierrecle/node-red-contrib-mi-devices)
+* [aqara2mqtt](https://github.com/hobbyquaker/aqara2mqtt)
+
+
+#### License
+
+GPL-3.0
+
+Copryright (c) Marvin ROGER
