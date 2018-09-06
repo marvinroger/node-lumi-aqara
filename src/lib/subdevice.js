@@ -1,6 +1,6 @@
 const events = require('events')
 
-const {SUBDEVICE_MIN_VOLT, SUBDEVICE_MAX_VOLT} = require('../constants')
+const {SUBDEVICE_MAINS_HEARTBEAT_INTERVAL_MS, SUBDEVICE_MAINS_HEARTBEAT_OFFLINE_RATIO, SUBDEVICE_BATTERY_HEARTBEAT_INTERVAL_MS, SUBDEVICE_BATTERY_HEARTBEAT_OFFLINE_RATIO, SUBDEVICE_MIN_VOLT, SUBDEVICE_MAX_VOLT} = require('../constants')
 
 class Subdevice extends events.EventEmitter {
   constructor (opts) {
@@ -9,11 +9,31 @@ class Subdevice extends events.EventEmitter {
     this._sid = opts.sid
     this._type = opts.type
 
+    this._mains = opts.mains
+    this._heartbeatWatchdog = null
+    this._rearmWatchdog()
+    this._offline = true
+
     this._voltage = null
+  }
+
+  _rearmWatchdog () {
+    if (this._heartbeatWatchdog) clearTimeout(this._heartbeatWatchdog)
+    this._heartbeatWatchdog = setTimeout(() => {
+      if (!this._offline) {
+        this.emit('offline')
+        this._offline = true
+      }
+    }, this._mains ? SUBDEVICE_MAINS_HEARTBEAT_INTERVAL_MS * SUBDEVICE_MAINS_HEARTBEAT_OFFLINE_RATIO : SUBDEVICE_BATTERY_HEARTBEAT_INTERVAL_MS * SUBDEVICE_BATTERY_HEARTBEAT_OFFLINE_RATIO)
   }
 
   _handleState (state) {
     if (typeof state.voltage !== 'undefined') this._voltage = state.voltage
+    if (this._offline) {
+      this._offline = false
+      this.emit('online')
+    }
+    this._rearmWatchdog()
   }
 
   getSid () {

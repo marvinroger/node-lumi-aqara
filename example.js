@@ -30,6 +30,12 @@ aqara.on('gateway', (gateway) => {
         device.on('close', () => {
           console.log(`${device.getSid()} is now close`)
         })
+        device.on('offline', () => {
+          console.log(`${device.getSid()} is offline`)
+        })
+        device.on('online', () => {
+          console.log(`${device.getSid()} is online`)
+        })
         break
       case 'switch':
         console.log(`  Switch`)
