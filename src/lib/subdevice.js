@@ -12,7 +12,7 @@ class Subdevice extends events.EventEmitter {
     this._mains = opts.mains
     this._heartbeatWatchdog = null
     this._rearmWatchdog()
-    this._offline = true
+    this._offline = null
 
     this._voltage = null
   }
@@ -29,11 +29,23 @@ class Subdevice extends events.EventEmitter {
 
   _handleState (state) {
     if (typeof state.voltage !== 'undefined') this._voltage = state.voltage
-    if (this._offline) {
+
+    if (state.cached) this._cached = true
+    else this._cached = false
+
+    if (!state.cached && this._offline !== false) {
       this._offline = false
       this.emit('online')
     }
     this._rearmWatchdog()
+  }
+
+  getCached () {
+    return this._cached
+  }
+
+  getOffline () {
+    return this._offline
   }
 
   getSid () {
