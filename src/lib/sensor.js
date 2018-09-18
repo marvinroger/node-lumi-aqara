@@ -9,8 +9,8 @@ class Sensor extends Subdevice {
     this._pressure = null
   }
 
-  _handleState (state) {
-    super._handleState(state)
+  _handleState (state, initial) {
+    super._handleState(state, initial)
 
     // all fields come at once at first but one-by-one later
     if (state.temperature) {
