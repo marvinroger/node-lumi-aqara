@@ -7,8 +7,8 @@ class Vibration extends Subdevice {
 
   }
 
-  _handleState (state) {
-    super._handleState(state)
+  _handleState (state, initial) {
+    super._handleState(state, initial)
 
     if ('status' in state) {
       // status can be "vibrate", "tilt", "free_fall". "tilt" is always followed by a "final_tilt_angel" state

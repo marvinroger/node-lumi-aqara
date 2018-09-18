@@ -7,8 +7,8 @@ class Leak extends Subdevice {
     this._leaking = null
   }
 
-  _handleState (state) {
-    super._handleState(state)
+  _handleState (state, initial) {
+    super._handleState(state, initial)
 
     if (typeof state.status === 'undefined') return
 

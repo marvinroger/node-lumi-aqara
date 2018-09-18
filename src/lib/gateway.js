@@ -104,9 +104,8 @@ class Gateway extends events.EventEmitter {
 
           if (subdevice) {
             this._subdevices.set(msg.sid, subdevice)
-            subdevice._handleState(state)
+            subdevice._handleState(state, true)
             this.emit('subdevice', subdevice)
-            subdevice._offline = true
           }
         }
         break

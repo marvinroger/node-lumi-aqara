@@ -8,8 +8,8 @@ class Cube extends Subdevice {
     this._rotateDegrees = null
   }
 
-  _handleState (state) {
-    super._handleState(state)
+  _handleState (state, initial) {
+    super._handleState(state, initial)
 
     if ('rotate' in state) {
       this._status = 'rotate'

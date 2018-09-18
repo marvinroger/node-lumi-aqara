@@ -8,8 +8,8 @@ class Smoke extends Subdevice {
     this._density = null
   }
 
-  _handleState (state) {
-    super._handleState(state)
+  _handleState (state, initial) {
+    super._handleState(state, initial)
 
     if ('alarm' in state) this._alarm = state.alarm !== '0'
     if ('density' in state) this._density = state.density;

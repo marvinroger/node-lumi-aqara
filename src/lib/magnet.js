@@ -7,8 +7,8 @@ class Magnet extends Subdevice {
     this._open = null
   }
 
-  _handleState (state) {
-    super._handleState(state)
+  _handleState (state, initial) {
+    super._handleState(state, initial)
 
     if (typeof state.status === 'undefined') return // might be no_close
 

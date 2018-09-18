@@ -9,8 +9,8 @@ class Motion extends Subdevice {
     this._seconds = null
   }
 
-  _handleState (state) {
-    super._handleState(state)
+  _handleState (state, initial) {
+    super._handleState(state, initial)
 
     // message with lux value comes separately and seems to arrive before motion messages
     if (state.lux) this._lux = state.lux
