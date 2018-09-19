@@ -111,12 +111,14 @@ class Gateway extends events.EventEmitter {
         }
         break
       case 'heartbeat':
+        console.log('heartbeat', msg);
         if (msg.sid === this._sid) {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
         } else {
           const subdevice = this._subdevices.get(msg.sid)
           if (subdevice) {
+            state = JSON.parse(msg.data)
             state.cached = false
             subdevice._handleState(state)
           } else {
@@ -125,6 +127,7 @@ class Gateway extends events.EventEmitter {
         }
         break
       case 'report':
+        console.log('report', msg);
         state = JSON.parse(msg.data)
         if (msg.sid === this._sid) { this._handleState(state) }// self
         else {
