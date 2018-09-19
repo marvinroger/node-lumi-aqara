@@ -111,7 +111,7 @@ class Gateway extends events.EventEmitter {
         }
         break
       case 'heartbeat':
-         if (msg.sid === this._sid) {
+        if (msg.sid === this._sid) {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
         } else {
