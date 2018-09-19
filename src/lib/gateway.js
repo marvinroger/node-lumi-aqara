@@ -104,9 +104,9 @@ class Gateway extends events.EventEmitter {
 
           if (subdevice) {
             this._subdevices.set(msg.sid, subdevice)
+            state.cached = true
             subdevice._handleState(state)
             this.emit('subdevice', subdevice)
-            subdevice._offline = true
           }
         }
         break
@@ -114,6 +114,15 @@ class Gateway extends events.EventEmitter {
         if (msg.sid === this._sid) {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
+        } else {
+          const subdevice = this._subdevices.get(msg.sid)
+          if (subdevice) {
+            state = JSON.parse(msg.data)
+            state.cached = false
+            subdevice._handleState(state)
+          } else {
+            // console.log('did not manage to find device, or device not yet supported')
+          }
         }
         break
       case 'report':
@@ -122,6 +131,7 @@ class Gateway extends events.EventEmitter {
         else {
           const subdevice = this._subdevices.get(msg.sid)
           if (subdevice) {
+            state.cached = false
             subdevice._handleState(state)
           } else {
             // console.log('did not manage to find device, or device not yet supported')
