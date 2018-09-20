@@ -41,6 +41,7 @@ class Gateway extends events.EventEmitter {
   }
 
   _handleMessage (msg) {
+    let handled
     let sid
     let type
     let state
@@ -63,7 +64,7 @@ class Gateway extends events.EventEmitter {
 
         if (sid === this._sid) { // self
           this._handleState(state)
-
+          handled = true
           this._ready = true
           this.emit('ready')
         } else {
@@ -107,6 +108,7 @@ class Gateway extends events.EventEmitter {
             state.cached = true
             subdevice._handleState(state)
             this.emit('subdevice', subdevice)
+            handled = true
           }
         }
         break
@@ -114,6 +116,16 @@ class Gateway extends events.EventEmitter {
         if (msg.sid === this._sid) {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
+          handled = true
+        } else {
+          const subdevice = this._subdevices.get(msg.sid)
+          if (subdevice) {
+            state.cached = false
+            subdevice._handleState(state)
+            handled = true
+          } else {
+            // console.log('did not manage to find device, or device not yet supported')
+          }
         }
         break
       case 'report':
@@ -124,14 +136,17 @@ class Gateway extends events.EventEmitter {
           if (subdevice) {
             state.cached = false
             subdevice._handleState(state)
+            handled = true
           } else {
             // console.log('did not manage to find device, or device not yet supported')
           }
         }
         break
+      default:
+        console.log('unknown cmd', msg)
     }
 
-    return true
+    return handled
   }
 
   _handleState (state) {

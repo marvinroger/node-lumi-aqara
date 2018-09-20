@@ -39,12 +39,11 @@ class Aqara extends events.EventEmitter {
 
   _handleMessage (msg) {
     const parsed = JSON.parse(msg.toString())
-
     let handled = false
 
     switch (parsed.cmd) {
       case 'heartbeat':
-        if (!this._gateways.has(parsed.sid)) {
+        if (parsed.model === 'gateway' && !this._gateways.has(parsed.sid)) {
           handled = true
           this._triggerWhois()
         }
