@@ -118,6 +118,10 @@ class Gateway extends events.EventEmitter {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
           handled = true
+        } else if (msg.sid === this._sid) {
+          state = JSON.parse(msg.data);
+          this._handleState(state)
+          handled = true
         } else {
           const subdevice = this._subdevices.get(msg.sid)
           if (subdevice) {
