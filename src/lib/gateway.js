@@ -117,6 +117,7 @@ class Gateway extends events.EventEmitter {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
           handled = true
+          break
         }
         // Intentional fall through to next case
       case 'report':
