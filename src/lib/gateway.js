@@ -113,27 +113,15 @@ class Gateway extends events.EventEmitter {
         }
         break
       case 'heartbeat':
-        if (msg.sid === this._sid) {
+      case 'report':
+        if (msg.cmd === 'heartbeat' && msg.sid === this._sid) {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
           handled = true
         } else {
           const subdevice = this._subdevices.get(msg.sid)
           if (subdevice) {
-            state.cached = false
-            subdevice._handleState(state)
-            handled = true
-          } else {
-            // console.log('did not manage to find device, or device not yet supported')
-          }
-        }
-        break
-      case 'report':
-        state = JSON.parse(msg.data)
-        if (msg.sid === this._sid) { this._handleState(state) }// self
-        else {
-          const subdevice = this._subdevices.get(msg.sid)
-          if (subdevice) {
+            state = JSON.parse(msg.data);
             state.cached = false
             subdevice._handleState(state)
             handled = true
