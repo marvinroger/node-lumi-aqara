@@ -49,11 +49,11 @@ class Subdevice extends events.EventEmitter {
     this._rearmWatchdog()
   }
 
-  getCached () {
+  isCached () {
     return this._cached
   }
 
-  getOffline () {
+  isOffline () {
     return this._offline
   }
 
