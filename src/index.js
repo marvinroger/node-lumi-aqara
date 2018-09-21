@@ -38,7 +38,10 @@ class Aqara extends events.EventEmitter {
   }
 
   _handleMessage (msg) {
-    const parsed = JSON.parse(msg.toString())
+    msg = msg.toString()
+    this.emit('debug', msg)
+    const parsed = JSON.parse(msg)
+
     let handled = false
 
     switch (parsed.cmd) {
