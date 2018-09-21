@@ -44,7 +44,7 @@ class Gateway extends events.EventEmitter {
     let handled
     let sid
     let type
-    let state
+    let state = msg.data ? JSON.parse(msg.data) : null
     switch (msg.cmd) {
       case 'get_id_list_ack':
         this._refreshKey(msg.token)
@@ -52,7 +52,7 @@ class Gateway extends events.EventEmitter {
         const payload = `{"cmd": "read", "sid": "${this._sid}"}`
         this._sendUnicast(payload)
         // read subdevices
-        for (const sid of JSON.parse(msg.data)) {
+        for (const sid of state) {
           const payload = `{"cmd": "read", "sid": "${sid}"}`
           this._sendUnicast(payload)
         }
@@ -60,7 +60,6 @@ class Gateway extends events.EventEmitter {
       case 'read_ack':
         sid = msg.sid
         type = msg.model
-        state = JSON.parse(msg.data)
 
         if (sid === this._sid) { // self
           this._handleState(state)
@@ -117,11 +116,18 @@ class Gateway extends events.EventEmitter {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
           handled = true
-          break
+        } else {
+          const subdevice = this._subdevices.get(msg.sid)
+          if (subdevice) {
+            subdevice._heartbeat(state)
+            handled = true
+          } else {
+            //console.log('did not manage to find device, or device not yet supported')
+          }
         }
-        // Intentional fall through to next case
+        break
       case 'report':
-        state = JSON.parse(msg.data);
+
         if (msg.sid === this._sid) {
           this._handleState(state)
           handled = true
@@ -132,12 +138,12 @@ class Gateway extends events.EventEmitter {
             subdevice._handleState(state)
             handled = true
           } else {
-            // console.log('did not manage to find device, or device not yet supported')
+            //console.log('did not manage to find device, or device not yet supported')
           }
         }
         break
       default:
-        console.log('unknown cmd', msg)
+        //console.log('unknown cmd', msg)
     }
 
     return handled

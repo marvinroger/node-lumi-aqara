@@ -27,11 +27,20 @@ class Subdevice extends events.EventEmitter {
     }, this._mains ? SUBDEVICE_MAINS_HEARTBEAT_INTERVAL_MS * SUBDEVICE_MAINS_HEARTBEAT_OFFLINE_RATIO : SUBDEVICE_BATTERY_HEARTBEAT_INTERVAL_MS * SUBDEVICE_BATTERY_HEARTBEAT_OFFLINE_RATIO)
   }
 
+  _heartbeat (state) {
+    if (typeof state.voltage !== 'undefined') this._voltage = state.voltage
+
+    if (this._offline !== false) {
+      this._offline = false
+      this.emit('online')
+    }
+    this._rearmWatchdog()
+  }
+
   _handleState (state) {
     if (typeof state.voltage !== 'undefined') this._voltage = state.voltage
 
-    if (state.cached) this._cached = true
-    else this._cached = false
+    this._cached = Boolean(state.cached)
 
     if (!state.cached && this._offline !== false) {
       this._offline = false
