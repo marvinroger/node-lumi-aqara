@@ -12,7 +12,7 @@ class Subdevice extends events.EventEmitter {
     this._mains = opts.mains
     this._heartbeatWatchdog = null
     this._rearmWatchdog()
-    this._offline = true
+    this._offline = null
 
     this._voltage = null
   }
@@ -27,13 +27,34 @@ class Subdevice extends events.EventEmitter {
     }, this._mains ? SUBDEVICE_MAINS_HEARTBEAT_INTERVAL_MS * SUBDEVICE_MAINS_HEARTBEAT_OFFLINE_RATIO : SUBDEVICE_BATTERY_HEARTBEAT_INTERVAL_MS * SUBDEVICE_BATTERY_HEARTBEAT_OFFLINE_RATIO)
   }
 
-  _handleState (state) {
+  _heartbeat (state) {
     if (typeof state.voltage !== 'undefined') this._voltage = state.voltage
-    if (this._offline) {
+
+    if (this._offline !== false) {
       this._offline = false
       this.emit('online')
     }
     this._rearmWatchdog()
+  }
+
+  _handleState (state) {
+    if (typeof state.voltage !== 'undefined') this._voltage = state.voltage
+
+    this._cached = Boolean(state.cached)
+
+    if (!state.cached && this._offline !== false) {
+      this._offline = false
+      this.emit('online')
+    }
+    this._rearmWatchdog()
+  }
+
+  isCached () {
+    return this._cached
+  }
+
+  isOffline () {
+    return this._offline
   }
 
   getSid () {
