@@ -30,6 +30,12 @@ aqara.on('gateway', (gateway) => {
         device.on('close', () => {
           console.log(`${device.getSid()} is now close`)
         })
+        device.on('offline', () => {
+          console.log(`${device.getSid()} is offline`)
+        })
+        device.on('online', () => {
+          console.log(`${device.getSid()} is online`)
+        })
         break
       case 'switch':
         console.log(`  Switch`)
@@ -92,6 +98,21 @@ aqara.on('gateway', (gateway) => {
           console.log(`${device.getSid()} (${device.hasAlarm() ? 'SMOKE DETECTED' : 'no smoke detected'} density: ${device.getDensity()})`)
         })
         break
+      case 'vibration':
+        console.log(`  Vibration`)
+        device.on('update', () => {
+          console.log(`${device.getSid()} (coordination: ${device.getCoordination()} bed_activity: ${device.getBedActivity()})`)
+        })
+        device.on('vibrate', () => {
+          console.log(`${device.getSid()} has vibration`)
+        })
+        device.on('freeFall', () => {
+          console.log(`${device.getSid()} has freeFall`)
+        })
+        device.on('tilt', () => {
+          console.log(`${device.getSid()} (tilt: ${device.getFinalTiltAngel()}°)`)
+        })
+        break;
     }
   })
 

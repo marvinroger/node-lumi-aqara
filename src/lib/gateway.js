@@ -10,6 +10,7 @@ const Leak = require('./leak')
 const Cube = require('./cube')
 const Plug = require('./plug')
 const Smoke = require('./smoke')
+const Vibration = require('./vibration')
 
 class Gateway extends events.EventEmitter {
   constructor (opts) {
@@ -41,9 +42,10 @@ class Gateway extends events.EventEmitter {
   }
 
   _handleMessage (msg) {
+    let handled
     let sid
     let type
-    let state
+    let state = msg.data ? JSON.parse(msg.data) : null
     switch (msg.cmd) {
       case 'get_id_list_ack':
         this._refreshKey(msg.token)
@@ -51,7 +53,7 @@ class Gateway extends events.EventEmitter {
         const payload = `{"cmd": "read", "sid": "${this._sid}"}`
         this._sendUnicast(payload)
         // read subdevices
-        for (const sid of JSON.parse(msg.data)) {
+        for (const sid of state) {
           const payload = `{"cmd": "read", "sid": "${sid}"}`
           this._sendUnicast(payload)
         }
@@ -59,11 +61,10 @@ class Gateway extends events.EventEmitter {
       case 'read_ack':
         sid = msg.sid
         type = msg.model
-        state = JSON.parse(msg.data)
 
         if (sid === this._sid) { // self
           this._handleState(state)
-
+          handled = true
           this._ready = true
           this.emit('ready')
         } else {
@@ -89,6 +90,7 @@ class Gateway extends events.EventEmitter {
               subdevice = new Leak({ sid })
               break
             case 'cube':
+            case 'sensor_cube.aqgl01':
               subdevice = new Cube({ sid })
               break
             case 'plug':
@@ -96,14 +98,19 @@ class Gateway extends events.EventEmitter {
             case 'smoke':
               subdevice = new Smoke({ sid })
               break
+            case 'vibration':
+              subdevice = new Vibration({ sid })
+              break
             default:
               return false
           }
 
           if (subdevice) {
             this._subdevices.set(msg.sid, subdevice)
+            state.cached = true
             subdevice._handleState(state)
             this.emit('subdevice', subdevice)
+            handled = true
           }
         }
         break
@@ -111,29 +118,38 @@ class Gateway extends events.EventEmitter {
         if (msg.sid === this._sid) {
           this._refreshKey(msg.token)
           this._rearmWatchdog()
+          handled = true
         } else {
           const subdevice = this._subdevices.get(msg.sid)
           if (subdevice) {
-            state = JSON.parse(msg.data)
-            subdevice._handleState(state)
+            subdevice._heartbeat(state)
+            handled = true
+          } else {
+            //console.log('did not manage to find device, or device not yet supported')
           }
         }
         break
       case 'report':
-        state = JSON.parse(msg.data)
-        if (msg.sid === this._sid) { this._handleState(state) }// self
-        else {
+
+        if (msg.sid === this._sid) {
+          this._handleState(state)
+          handled = true
+        } else {
           const subdevice = this._subdevices.get(msg.sid)
           if (subdevice) {
+            state.cached = false
             subdevice._handleState(state)
+            handled = true
           } else {
-            // console.log('did not manage to find device, or device not yet supported')
+            //console.log('did not manage to find device, or device not yet supported')
           }
         }
         break
+      default:
+        //console.log('unknown cmd', msg)
     }
 
-    return true
+    return handled
   }
 
   _handleState (state) {
