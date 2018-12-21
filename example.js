@@ -21,6 +21,9 @@ aqara.on('gateway', (gateway) => {
     console.log(`  Battery: ${device.getBatteryPercentage()}%`)
     console.log(`  Type: ${device.getType()}`)
     console.log(`  SID: ${device.getSid()}`)
+
+    console.log("Testing type", device.getType())
+
     switch (device.getType()) {
       case 'magnet':
         console.log(`  Magnet (${device.isOpen() ? 'open' : 'close'})`)
@@ -37,6 +40,18 @@ aqara.on('gateway', (gateway) => {
           console.log(`${device.getSid()} is online`)
         })
         break
+      case 'wall_switch':
+        console.log(`  Wall Switch`)
+        device.on('click', () => {
+          console.log(`${device.getSid()} is clicked on channel ${device.getChannel()}`)
+        })
+        device.on('doubleClick', () => {
+          console.log(`${device.getSid()} is double clicked on channel ${device.getChannel()}`)
+        })
+        device.on('longClick', () => {
+          console.log(`${device.getSid()} is long pressed on channel ${device.getChannel()}`)
+        })
+        break;
       case 'switch':
         console.log(`  Switch`)
         device.on('click', () => {
