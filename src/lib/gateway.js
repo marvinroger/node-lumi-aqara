@@ -180,8 +180,10 @@ class Gateway extends events.EventEmitter {
     this._color.g = buf.readUInt8(2)
     this._color.b = buf.readUInt8(3)
     this._intensity = buf.readUInt8(0) // 0-100
+    this._illumination = state.illumination
 
     this.emit('lightState', { color: this._color, intensity: this._intensity })
+    this.emit('sensorState', { illumination: this._illumination })
   }
 
   _refreshKey (token) {
@@ -261,6 +263,15 @@ class Gateway extends events.EventEmitter {
 
     this._intensity = intensity
     this._writeColor()
+  }
+
+  get illumination() { return this._illumination }
+
+  requestUpdate() {
+    this._sendUnicast({
+      cmd: 'read',
+      sid: this.sid
+    })
   }
 }
 
