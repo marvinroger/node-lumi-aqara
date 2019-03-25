@@ -4,6 +4,8 @@ const events = require('events')
 const {AQARA_IV, GATEWAY_HEARTBEAT_INTERVAL_MS, GATEWAY_HEARTBEAT_OFFLINE_RATIO} = require('../constants')
 const Magnet = require('./magnet')
 const Switch = require('./switch')
+const WallSwitch = require('./wall_switch')
+
 const Motion = require('./motion')
 const Sensor = require('./sensor')
 const Leak = require('./leak')
@@ -74,8 +76,13 @@ class Gateway extends events.EventEmitter {
               subdevice = new Magnet({ sid })
               break
             case 'switch':
+            case 'remote.b1acn01':
             case 'sensor_switch.aq2':
-            subdevice = new Switch({ sid })
+              subdevice = new Switch({ sid })
+              break
+            case 'remote.b186acn01':
+            case 'remote.b286acn01':
+              subdevice = new WallSwitch({ sid })
               break
             case 'motion':
             case 'sensor_motion.aq2':

@@ -88,7 +88,7 @@ class Aqara extends events.EventEmitter {
       }
     }
 
-    if (!handled) console.log(`not handled: ${JSON.stringify(parsed)}`)
+    if (!handled) this.emit('unhandled', parsed)
   }
 }
 
