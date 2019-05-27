@@ -12,6 +12,7 @@ const Leak = require('./leak')
 const Cube = require('./cube')
 const Smoke = require('./smoke')
 const Vibration = require('./vibration')
+const Plug = require('./plug')
 
 class Gateway extends events.EventEmitter {
   constructor (opts) {
@@ -19,7 +20,7 @@ class Gateway extends events.EventEmitter {
 
     this._ip = opts.ip
     this._sid = opts.sid
-    this._sendUnicast = opts.sendUnicast
+    this._unicastTransport = opts.sendUnicast
 
     this._heartbeatWatchdog = null
     this._rearmWatchdog()
@@ -31,8 +32,17 @@ class Gateway extends events.EventEmitter {
 
     this._subdevices = new Map()
 
-    const payload = '{"cmd": "get_id_list"}'
-    this._sendUnicast(payload)
+    this._sendUnicast({ cmd: 'get_id_list' })
+  }
+
+  _sendUnicast(payload) {
+    if (payload.data) {
+      payload.data.key = this._key
+
+      payload.data = JSON.stringify(payload.data)
+    }
+
+    this._unicastTransport(JSON.stringify(payload))
   }
 
   _rearmWatchdog () {
@@ -51,12 +61,10 @@ class Gateway extends events.EventEmitter {
       case 'get_id_list_ack':
         this._refreshKey(msg.token)
 
-        const payload = `{"cmd": "read", "sid": "${this._sid}"}`
-        this._sendUnicast(payload)
+        this._sendUnicast({ cmd: 'read', sid: this._sid })
         // read subdevices
-        for (const sid of state) {
-          const payload = `{"cmd": "read", "sid": "${sid}"}`
-          this._sendUnicast(payload)
+        for (const sid of JSON.parse(msg.data)) {
+          this._sendUnicast({ cmd: 'read', sid })
         }
         break
       case 'read_ack':
@@ -104,6 +112,15 @@ class Gateway extends events.EventEmitter {
               break
             case 'vibration':
               subdevice = new Vibration({ sid })
+              break
+            case 'plug':
+              subdevice = new Plug({ sid }, payload => {
+                payload.sid = sid
+                payload.model = type
+                payload.short_id = msg.short_id
+
+                this._sendUnicast(payload)
+              })
               break
             default:
               return false
@@ -163,8 +180,10 @@ class Gateway extends events.EventEmitter {
     this._color.g = buf.readUInt8(2)
     this._color.b = buf.readUInt8(3)
     this._intensity = buf.readUInt8(0) // 0-100
+    this._illumination = state.illumination
 
     this.emit('lightState', { color: this._color, intensity: this._intensity })
+    this.emit('sensorState', { illumination: this._illumination })
   }
 
   _refreshKey (token) {
@@ -185,14 +204,29 @@ class Gateway extends events.EventEmitter {
 
     const value = buf.readUInt32BE(0)
 
-    const payload = `{"cmd": "write", "model": "gateway", "sid": "${this._sid}", "short_id": 0, "data": "{\\"rgb\\":${value}, \\"key\\": \\"${this._key}\\"}"}`
-    this._sendUnicast(payload)
+    this._sendUnicast({
+      cmd: 'write',
+      model: 'gateway',
+      sid: this._sid,
+      short_id: 0,
+      data: {
+        rgb: value
+      }
+    })
   }
 
   _writeSound () {
 
-    const payload = `{"cmd": "write", "model": "gateway", "sid": "${this._sid}", "short_id": 0, "data": "{\\"mid\\":${this._sound}, \\"vol\\":${this._volume}, \\"key\\": \\"${this._key}\\"}"}`
-    this._sendUnicast(payload)
+    this._sendUnicast({
+      cmd: 'write',
+      model: 'gateway',
+      sid: this._sid,
+      short_id: 0,
+      data: {
+        mid: this._sound,
+        vol: this._volume
+      }
+    })
   }
 
   get ip () { return this._ip }
@@ -229,6 +263,15 @@ class Gateway extends events.EventEmitter {
 
     this._intensity = intensity
     this._writeColor()
+  }
+
+  get illumination() { return this._illumination }
+
+  requestUpdate() {
+    this._sendUnicast({
+      cmd: 'read',
+      sid: this.sid
+    })
   }
 }
 
