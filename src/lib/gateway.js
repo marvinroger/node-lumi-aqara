@@ -108,6 +108,7 @@ class Gateway extends events.EventEmitter {
               subdevice = new Cube({ sid })
               break
             case 'smoke':
+            case 'natgas':
               subdevice = new Smoke({ sid })
               break
             case 'vibration':
