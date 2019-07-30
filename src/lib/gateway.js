@@ -123,6 +123,7 @@ class Gateway extends events.EventEmitter {
               })
               break
             default:
+              console.log('unsupported device', msg.model);
               return false
           }
 
