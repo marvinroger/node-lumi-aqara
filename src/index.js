@@ -6,8 +6,22 @@ const {MULTICAST_ADDRESS, DISCOVERY_PORT, SERVER_PORT} = require('./constants')
 const Gateway = require('./lib/gateway')
 
 class Aqara extends events.EventEmitter {
-  constructor () {
+  constructor (options) {
     super()
+
+    this._options = {
+      bindHost: '0.0.0.0',
+      unbindHosts: []
+    };
+
+    if(options && options.bindHost) {
+      this._options.bindHost = options.bindHost;
+    }
+
+    if(options && options.unbindHosts) {
+      this._options.unbindHosts = Array.isArray(options.unbindHosts)? options.unbindHosts : [];
+    }
+
 
     this._gateways = new Map()
 
@@ -19,17 +33,19 @@ class Aqara extends events.EventEmitter {
 
         for (const connection of networkIface) {
           if (connection.family === 'IPv4') {
-            this._serverSocket.addMembership(MULTICAST_ADDRESS, connection.address)
+            if(this._options.unbindHosts.indexOf(connection.address) === -1) {
+              this._serverSocket.addMembership(MULTICAST_ADDRESS, connection.address)
+            }
           }
         }
       }
 
       this._triggerWhois()
-    })
+    });
 
     this._serverSocket.on('message', this._handleMessage.bind(this))
 
-    this._serverSocket.bind(SERVER_PORT, '0.0.0.0')
+    this._serverSocket.bind(SERVER_PORT, this._options.bindHost);
   }
 
   _triggerWhois () {
